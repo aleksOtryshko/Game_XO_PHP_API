@@ -1,0 +1,171 @@
+openapi: 3.0.0
+info:
+  title: Tic-Tac-Toe Game API
+  description: REST API для игры "Крестики-нолики"
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Локальный сервер для разработки
+paths:
+  /index.php:
+    post:
+      summary: Создать новую игру или сделать ход
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/StartGameRequest'
+                - $ref: '#/components/schemas/MoveRequest'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/StartGameResponse'
+                  - $ref: '#/components/schemas/MoveResponse'
+        '400':
+          description: Ошибка в запросе
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    StartGameRequest:
+      type: object
+      properties:
+        method:
+          type: string
+          enum:
+            - start
+      required:
+        - method
+      example:
+        method: start
+
+    MoveRequest:
+      type: object
+      properties:
+        method:
+          type: string
+          enum:
+            - move
+        gameId:
+          type: string
+        data:
+          type: object
+          properties:
+            row:
+              type: integer
+              minimum: 0
+              maximum: 2
+            col:
+              type: integer
+              minimum: 0
+              maximum: 2
+            xo:
+              type: string
+              enum:
+                - X
+                - O
+          required:
+            - row
+            - col
+            - xo
+      required:
+        - method
+        - gameId
+        - data
+      example:
+        method: move
+        gameId: game_64fadb...
+        data:
+          row: 0
+          col: 1
+          xo: X
+
+    StartGameResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        data:
+          type: object
+          properties:
+            gameId:
+              type: string
+            board:
+              type: array
+              items:
+                type: array
+                items:
+                  type: string
+              example: ["-", "-", "-"]
+            nextTurn:
+              type: string
+              enum:
+                - X
+                - O
+      example:
+        status: 200
+        data:
+          gameId: game_64fadb...
+          board:
+            - ["-", "-", "-"]
+            - ["-", "-", "-"]
+            - ["-", "-", "-"]
+          nextTurn: X
+
+    MoveResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        data:
+          type: object
+          properties:
+            board:
+              type: array
+              items:
+                type: array
+                items:
+                  type: string
+            nextTurn:
+              type: string
+              enum:
+                - X
+                - O
+            gameOver:
+              type: boolean
+              nullable: true
+            winner:
+              type: string
+              nullable: true
+      example:
+        status: 200
+        data:
+          board:
+            - ["X", "-", "-"]
+            - ["-", "O", "-"]
+            - ["-", "-", "X"]
+          nextTurn: O
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        data:
+          type: object
+          properties:
+            error:
+              type: string
+      example:
+        status: 400
+        data:
+          error: Неверные данные для хода
