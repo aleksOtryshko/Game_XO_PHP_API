@@ -9,7 +9,7 @@ function sendRequest(string $url, array $payload): array
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     $response = curl_exec($ch);
-    
+
     if ($response === false) {
         die('Ошибка запроса: ' . curl_error($ch));
     }

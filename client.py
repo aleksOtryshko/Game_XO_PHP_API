@@ -9,7 +9,7 @@ def start_game():
         "method": "start"
     }
     response = requests.post(BASE_URL, json=payload)
-    
+
     if response.status_code == 200:
         data = response.json()
         print(f"Игра создана: ID игры - {data['data']['gameId']}")
@@ -29,9 +29,9 @@ def make_move(game_id, row, col, xo):
             "xo": xo
         }
     }
-    
-    response = requests.post(BASE_URL, json=payload)
-    
+
+ response = requests.post(BASE_URL, json=payload)
+
     if response.status_code == 200:
         data = response.json()
         print(f"Текущая доска:")
@@ -47,13 +47,14 @@ def make_move(game_id, row, col, xo):
         print(f"Ошибка: {response.json()['data']['error']}")
         return False
 
+
 # Основная логика клиента
 if __name__ == "__main__":
     game_data = start_game()
-    
+
     if game_data:
         game_id = game_data['gameId']
-        
+
         game_over = False
         while not game_over:
             print("\nВведите ход (номер строки и столбца от 0 до 2, X или O):")
@@ -62,3 +63,5 @@ if __name__ == "__main__":
             xo = input("X или O: ").upper()
 
             game_over = make_move(game_id, row, col, xo)
+                                                                                                                                                      64,1          Bot
+
